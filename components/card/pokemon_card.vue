@@ -12,11 +12,10 @@
 
       </v-row>
 
-      <div class="my-4 subtitle-1">
-        <p v-if="pokemon.species.is_baby">Bébé pokemon !</p>
-        <p v-if="pokemon.species.is_legendary">Pokémon légendaire !</p>
-        <p v-if="pokemon.species.is_mythical">Pokémon mythique</p>
-      </div>
+      <description :pokemon="pokemon"/>
+
+      <v-spacer></v-spacer>
+
     </v-card-text>
 
     <v-card-actions>
@@ -39,14 +38,8 @@
     </v-card-actions>
 
     <v-expand-transition>
-      <div v-show="showStat">
-        <v-divider></v-divider>
 
-        <v-card-text>
-          Stats
-        </v-card-text>
-      </div>
-
+      <stats v-show="showStat" :stats="pokemon.stats"/>
 
     </v-expand-transition>
 
@@ -56,7 +49,7 @@
         text
         @click="showMoves = !showMoves"
       >
-        Moves
+        Attaques
       </v-btn>
 
       <v-spacer></v-spacer>
@@ -70,23 +63,34 @@
     </v-card-actions>
 
     <v-expand-transition>
-      <div v-show="showMoves">
-        <v-divider></v-divider>
 
-        <v-card-text>
-          Attaques
-        </v-card-text>
-      </div>
-
+      <moves v-show="showMoves" :moves="pokemon.moves"/>
 
     </v-expand-transition>
   </v-card>
 </template>
 
 <script>
+import moves from "~/components/card/moves";
+import stats from "~/components/card/stats";
+import description from "~/components/card/description";
 export default {
-  name: "card",
-  
+  name: "pokemon_card",
+  props:{
+    pokemon:Object
+  },
+  data(){
+    return({
+      showStat : false,
+      showMoves : false
+    })
+  },
+  components:{
+    moves,
+    stats,
+    description
+  }
+
 }
 </script>
 
