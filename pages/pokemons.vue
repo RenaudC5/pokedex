@@ -1,12 +1,75 @@
 <template>
   <section class="pokemons">
+    <section class="pokemon-list">
     <h1>Pokemons ! </h1>
 
+      <button @click="getPokemons">Add pokemons</button>
+    <v-row>
+      <v-text-field
+        label="Pokemon"
+        placeholder="Search..."
+        v-model="pokemon_search"
+
+      ></v-text-field>
+    </v-row>
     <v-row >
-        <v-col cols="3" md="4" lg="3" sm="6" v-for="(pokemon,index) in pokemons.results" v-bind:key="index">
+        <v-col cols="3" md="4" lg="3" sm="6"
+               v-for="(pokemon,index) in this.$store.state.pokemons.filter(x => getName(x).toLocaleLowerCase().indexOf(pokemon_search.toLocaleLowerCase()) !== -1).slice(list_start,list_end)"
+               v-bind:key="index"
+        >
           <menu_card :pokemon="pokemon"/>
         </v-col>
     </v-row>
+    <v-row>
+      <v-col>
+        <v-btn
+          class="mx-2"
+          fab
+          dark
+          color="indigo"
+          @click="decrementList"
+        >
+          <v-icon dark>
+            mdi-arrow-left-bold-outline
+          </v-icon>
+        </v-btn>
+      </v-col>
+
+      <v-col class="d-flex justify-center align-center">
+
+        <p>
+          <span>{{list_start}}</span>
+          -
+          <span v-if="list_end < this.$store.getters.getNbPokemons">{{list_end}}</span>
+          <span v-else>{{this.$store.getters.getNbPokemons}}</span>
+        </p>
+      </v-col>
+
+      <v-col class="d-flex justify-end">
+        <v-btn
+          class="mx-2"
+          fab
+          dark
+          color="indigo"
+          @click="incrementList"
+        >
+          <v-icon dark>
+            mdi-arrow-right-bold-outline
+          </v-icon>
+        </v-btn>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        <template>
+          <v-progress-linear :value="list_end/ this.$store.getters.getNbPokemons*100"></v-progress-linear>
+        </template>
+      </v-col>
+    </v-row>
+
+  </section>
+
+    <team_menu/>
 
   </section>
 
@@ -14,15 +77,22 @@
 
 <script>
 import menu_card from "~/components/card/menu_card";
+import team_menu from "~/components/team/team_menu";
+
 import axios from "axios";
 import {LANGUAGE} from "~/constants";
+
+import {mapActions, mapState} from 'vuex'
 
 export default {
   name: "pokemons.vue",
   data() {
     return {
       language : LANGUAGE,
-      pokemons: []
+      list_start: 0,
+      list_end : 12,
+      list_step: 12,
+      pokemon_search : ""
     }
   },
   mounted: async function () {
@@ -42,7 +112,7 @@ export default {
       return res.data
     });*/
 
-    console.log("Chargement des pokémmons")
+    /*console.log("Chargement des pokémmons")
     this.pokemons = await axios.get("https://pokeapi.co/api/v2/pokemon?limit=151").then(async res => {
       console.log("Chargement des données")
       //récupération des données sur le pokemon
@@ -61,13 +131,55 @@ export default {
         });
       }
 
-      return res.data;
-    })
+      return res.data.results;
+    })*/
 
+    //first requets
+    /*let request = `https://pokeapi.co/api/v2/pokemon?offset=0&limit=${this.list_step}`
+    let end = false;
+    let nbTour = 0;
+    while(!end && nbTour >= 0){
+      let res = await this.loadPokemonData(request);
+      console.log("res")
+      console.log(res)
+
+      nbTour -=1;
+      this.$store.commit("addPokemons",res.results)
+
+      end = !res.next ;
+      request = res.next
+    }*/
+    this.getPokemons();
 
   },
+  computed : mapState(['pokemons']),
+  methods:{
+    incrementList : function (){
+      if(this.list_start + this.list_step < this.$store.getters.getNbPokemons){
+        this.list_start += this.list_step
+        this.list_end += this.list_step
+      }
+    },
+
+    decrementList : function (){
+      if(this.list_start - this.list_step >= 0){
+        this.list_start -= this.list_step
+        this.list_end -= this.list_step
+      }
+    },
+
+    getName : function (x) {
+      if(x.data.species.names){
+        return x.data.species.names.find(x => x.language.name === this.language).name
+      } else {
+        return x.name;
+      }
+    },
+    ...mapActions(["getPokemons"])
+  },
   components:{
-    menu_card
+    menu_card,
+    team_menu
   }
 }
 </script>

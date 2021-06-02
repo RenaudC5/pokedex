@@ -10,11 +10,29 @@
     </v-card-text>
 
     <v-card-actions>
-      <v-btn
-        color="deep-purple lighten-2"
-        text
-        @click="reserve"
-      >+</v-btn>
+      <v-menu
+        top
+        :offset-y="true"
+      >
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn
+            color="primary"
+            v-bind="attrs"
+            v-on="on"
+          >
+            Ajouter
+          </v-btn>
+        </template>
+
+        <v-list>
+          <v-list-item
+            v-for="(team, index) in $store.state.teams"
+            :key="index"
+          >
+            <v-list-item-title>{{ team.name }}</v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
     </v-card-actions>
 
 
@@ -22,7 +40,6 @@
 </template>
 
 <script>
-import axios from "axios";
 import {LANGUAGE} from "~/constants";
 
 export default {
@@ -31,7 +48,12 @@ export default {
     reserve : function (){
     },
     getName: function (){
-      return this.pokemon.data.species.names.find(x => x.language.name === this.language).name;
+      if(this.pokemon.data.species.names){
+        return this.pokemon.data.species.names.find(x => x.language.name === this.language).name;
+      } else {
+        return this.pokemon.name
+      }
+
     }
   },
   props:{
@@ -43,7 +65,7 @@ export default {
 
   data : function () {
     return({
-      language: LANGUAGE
+      language: LANGUAGE,
     })
   }
 }
