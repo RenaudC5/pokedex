@@ -1,6 +1,5 @@
 <template>
-  <section class="teams">
-    <h1>Teams</h1>
+  <section class="teams mt-4">
     <v-row>
       <v-col>
         <add_team/>

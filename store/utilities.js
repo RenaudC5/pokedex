@@ -27,7 +27,8 @@ export const mutations = {
   },
 
   resetList(state){
-    state.pagination = {
+    console.log("resetPage")
+    state.data.pagination = {
         list_start:0,
         list_end:NB_POKEMON_PAR_PAGE,
         list_step:NB_POKEMON_PAR_PAGE
@@ -42,7 +43,9 @@ export const mutations = {
   decrementList(state){
     state.data.pagination.list_start -= state.data.pagination.list_step;
     state.data.pagination.list_end -= state.data.pagination.list_step;
-  }
+  },
+
+
 }
 
 export const actions = {
@@ -65,6 +68,13 @@ export const actions = {
     if(state.data.pagination.list_start >= state.data.pagination.list_step){
       commit("decrementList")
     }
+  },
+
+  resetList({commit,state}){
+    if(state.data.pagination.list_start !== 0){ //optimisation
+      commit("resetList")
+    }
+
   }
 
 }

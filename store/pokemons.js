@@ -18,7 +18,7 @@ export const actions = {
     //récupération des données de l'API
     let pokemonToAdd = true
     let counter = 5
-    let url = "https://pokeapi.co/api/v2/pokemon?offset=0&limit=12"
+    let url = "https://pokeapi.co/api/v2/pokemon?offset=140&limit=12"
     while(pokemonToAdd && counter > 0){
       counter--
       let pokemons = await axios.get(url).then(async res => {
@@ -30,9 +30,11 @@ export const actions = {
             let pokemonData = pokemon.data
 
             pokemonData.species = await axios.get(pokemonData.species.url).then(res => res.data);
+            pokemonData.generation = await axios.get(`https://pokeapi.co/api/v2/pokemon-species/${pokemonData.id}/`).then(res => res.data)
 
             return pokemonData
           });
+
         }
 
         return pokemonsRes
