@@ -6,6 +6,7 @@ export const state = () => ({
 
 export const mutations = {
   addPokemons(state,pokemons){
+    console.log(pokemons)
     console.time(`add ${pokemons.length} pokemons`)
     state.data = [...state.data, ...pokemons]
     console.timeEnd(`add ${pokemons.length} pokemons`)
@@ -16,7 +17,7 @@ export const actions = {
   getPokemons: async function ({commit}) {
     //récupération des données de l'API
     let pokemonToAdd = true
-    let counter = 5
+    let counter = 20
     let url = "https://pokeapi.co/api/v2/pokemon?offset=0&limit=12"
     while(pokemonToAdd && counter > 0){
       counter--
@@ -44,6 +45,9 @@ export const actions = {
 
       if(!pokemons.next) pokemonToAdd = false
     }
+  },
+  addPokemons({commit}, pokemons){
+    commit("addPokemonsFromStorage",pokemons);
   }
 }
 

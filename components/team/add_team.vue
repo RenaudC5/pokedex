@@ -87,12 +87,9 @@ export default {
         this.dialog = false
         this.error = false;
 
-        let date = new Date();
-        console.log("AddTeam method")
-        console.log(date.toLocaleTimeString())
-        console.log(date.getMilliseconds())
-
         this.addTeam(this.team_name)
+
+        this.$store.dispatch("utilities/updateSnack",{text : `Team ${this.team_name} ajoutée`, color:"blue"})
         this.team_name = ""
       }
 

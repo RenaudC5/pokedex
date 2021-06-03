@@ -2,13 +2,12 @@
   <section class="pokemons">
     <section class="pokemon-list">
     <h1>Pokemons ! </h1>
-
-      <button @click="getPokemons">Add pokemons</button>
     <v-row>
       <v-text-field
         label="Pokemon"
         placeholder="Search..."
         v-model="pokemon_search"
+        @keydown="resetPage"
 
       ></v-text-field>
     </v-row>
@@ -69,6 +68,8 @@
 
   </section>
 
+    <v-divider></v-divider>
+
     <team_menu/>
 
   </section>
@@ -79,9 +80,9 @@
 import menu_card from "~/components/card/menu_card";
 import team_menu from "~/components/team/team_menu";
 
-import {LANGUAGE} from "~/constants";
+import {LANGUAGE, NB_POKEMON_PAR_PAGE} from "~/constants";
 
-import {mapActions, mapState} from 'vuex'
+import {mapState} from 'vuex'
 
 export default {
   name: "pokemons.vue",
@@ -89,8 +90,8 @@ export default {
     return {
       language : LANGUAGE,
       list_start: 0,
-      list_end : 12,
-      list_step: 12,
+      list_end : 0,
+      list_step: 0,
       pokemon_search : ""
     }
   },
@@ -148,8 +149,12 @@ export default {
       end = !res.next ;
       request = res.next
     }*/
-    this.getPokemons();
 
+
+  },
+  mounted() {
+    this.list_end = NB_POKEMON_PAR_PAGE;
+    this.list_step = NB_POKEMON_PAR_PAGE;
   },
   computed : mapState(['pokemons/data']),
   methods:{
@@ -174,7 +179,13 @@ export default {
         return x.name;
       }
     },
-    ...mapActions("pokemons",["getPokemons"])
+    resetPage: function () {
+      console.log("Reset Page")
+      this.list_end = NB_POKEMON_PAR_PAGE;
+      this.list_step = NB_POKEMON_PAR_PAGE;
+      this.list_start = 0;
+    }
+    //...mapActions("pokemons",["getPokemons"])
   },
   components:{
     menu_card,

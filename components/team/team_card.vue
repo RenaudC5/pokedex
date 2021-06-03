@@ -80,6 +80,7 @@ export default {
       this.dialog = false
       console.log(this.team)
       this.deleteSingleTeam(this.teamIndex)
+      this.$store.dispatch("utilities/updateSnack",{text : `Team ${this.team.name} suprimée`, color:"red"})
     },
     ...mapActions("teams",["deleteSingleTeam"])
   },
