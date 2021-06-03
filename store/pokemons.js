@@ -17,7 +17,7 @@ export const actions = {
   getPokemons: async function ({commit}) {
     //récupération des données de l'API
     let pokemonToAdd = true
-    let counter = 20
+    let counter = 5
     let url = "https://pokeapi.co/api/v2/pokemon?offset=0&limit=12"
     while(pokemonToAdd && counter > 0){
       counter--

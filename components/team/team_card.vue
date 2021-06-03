@@ -88,7 +88,7 @@ export default {
     deleteTeam : function(){
       this.dialog = false
       console.log(this.team)
-      this.deleteSingleTeam(this.teamIndex)
+      this.$store.dispatch("teams/deleteSingleTeam",this.teamIndex)
       this.$store.dispatch("utilities/updateSnack",{text : `Team ${this.team.name} suprimée`, color:"red"})
     },
     randomizeTeam : function (){
@@ -106,8 +106,7 @@ export default {
 
       this.$store.dispatch("teams/setTeam",{pokemons : randomPokemons, teamIndex : this.teamIndex})
 
-    },
-    ...mapActions("teams",["deleteSingleTeam,setTeam"])
+    }
   },
   components:{
     team_pokemon
