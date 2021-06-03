@@ -2,7 +2,7 @@
   <v-card>
     <v-card-title>{{pokemon.data.species.names.find(x => x.language.name === this.language).name}}</v-card-title>
     <v-card-text> <img :src="pokemon.data.sprites.front_default" alt="Pokemon vue de devant"/></v-card-text>
-    <v-card-actions>
+    <v-card-actions class="justify-end">
       <v-btn
         elevation="2"
         color="red"

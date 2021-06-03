@@ -58,7 +58,16 @@
       </v-row>
     </v-card-text>
 
-    <v-card-actions></v-card-actions>
+    <v-card-actions class="justify-end">
+      <v-btn
+        color="green"
+        elevation="1"
+        large
+        @click="randomizeTeam">
+      >
+        Aléatoire
+      </v-btn>
+    </v-card-actions>
   </v-card>
 </template>
 
@@ -82,7 +91,23 @@ export default {
       this.deleteSingleTeam(this.teamIndex)
       this.$store.dispatch("utilities/updateSnack",{text : `Team ${this.team.name} suprimée`, color:"red"})
     },
-    ...mapActions("teams",["deleteSingleTeam"])
+    randomizeTeam : function (){
+      let pokemons = [...this.$store.state.pokemons.data]
+
+      let randomNumber = []
+      let keys = Array.from(Array(pokemons.length).keys())
+      for(let i=0; i< 6; i++){
+        let random = Math.floor(Math.random() * keys.length);
+        randomNumber.push(keys[random])
+        keys.splice(random,1);
+      }
+
+      let randomPokemons = randomNumber.map(x => pokemons[x]);
+
+      this.$store.dispatch("teams/setTeam",{pokemons : randomPokemons, teamIndex : this.teamIndex})
+
+    },
+    ...mapActions("teams",["deleteSingleTeam,setTeam"])
   },
   components:{
     team_pokemon

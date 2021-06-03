@@ -32,6 +32,12 @@ export const mutations = {
     let team = state.data.find(x => x === req.team)
     team.pokemons.splice(team.pokemons.indexOf(req.pokemon),1)
     console.timeEnd("add pokemon")
+  },
+
+  setTeam(state,req){
+    let pokemons = req.pokemons;
+    let team = state.data[req.teamIndex]
+    team.pokemons = pokemons;
   }
 }
 
@@ -40,6 +46,9 @@ export const actions = {
   addTeam: function ({commit},name) {
     //creation de la team
     commit("addTeam", {name:name, pokemons:[]})
+  },
+  setTeam : function ({commit}, req){
+      commit("setTeam",req)
   },
 
   deleteSingleTeam: function ({commit},index) {
@@ -59,7 +68,7 @@ export const actions = {
     if(team.pokemons.find(x => x.id === pokemon.id)){
       commit("removePokemon",req)
     }
-  }
+  },
 }
 
 export const getters = {
