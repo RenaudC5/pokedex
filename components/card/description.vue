@@ -29,7 +29,7 @@
         <strong>Texte</strong>
       </v-col>
     </v-row>
-    <v-row v-for="text of pokemon.species.flavor_text_entries.filter(x => x.language.name === this.language)">
+    <v-row v-for="(text,index) of pokemon.species.flavor_text_entries.filter(x => x.language.name === this.language)" v-bind:key="index">
       <v-col class="col-md-3 "><strong>{{text.version.name}}</strong></v-col>
       <v-col class="col-md-9">{{text.flavor_text}}</v-col>
     </v-row>

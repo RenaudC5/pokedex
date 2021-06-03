@@ -7,8 +7,8 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col xl="4" lg="6" md="6" sm="12" v-for="team of this.$store.state.teams">
-        <team_card :team="team"/>
+      <v-col xl="4" lg="6" md="6" sm="12" v-for="(team,index) of this.$store.state.teams.data" v-bind:key="index">
+        <team_card :team="team" :teamIndex="index"/>
       </v-col>
     </v-row>
 

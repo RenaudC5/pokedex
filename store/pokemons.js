@@ -1,30 +1,22 @@
 import axios from "axios";
 
 export const state = () => ({
-  counter: 0,
-  pokemons:[],
-  teams:[]
+  data:[],
 })
 
 export const mutations = {
   addPokemons(state,pokemons){
-    state.pokemons = state.pokemons.concat(pokemons)
+    console.time(`add ${pokemons.length} pokemons`)
+    state.data = [...state.data, ...pokemons]
+    console.timeEnd(`add ${pokemons.length} pokemons`)
   },
-
-  addTeam(state,team) {
-    this.state.teams.push(team)
-  },
-
-  deleteTeam(state,name){
-    this.state.teams = this.state.teams.filter(x => x.name !== name)
-  }
 }
 
 export const actions = {
   getPokemons: async function ({commit}) {
     //récupération des données de l'API
     let pokemonToAdd = true
-    let counter = 12
+    let counter = 5
     let url = "https://pokeapi.co/api/v2/pokemon?offset=0&limit=12"
     while(pokemonToAdd && counter > 0){
       counter--
@@ -52,24 +44,12 @@ export const actions = {
 
       if(!pokemons.next) pokemonToAdd = false
     }
-  },
-
-  addTeam: function ({commit},name) {
-    commit("addTeam", {name:name})
-  },
-
-  deleteTeam: function ({commit},event,name) {
-    console.log(name)
-    commit("deleteTeam", name)
   }
 }
 
 export const getters = {
   getNbPokemons: (state) => {
-    return state.pokemons.length
-  },
-  getNbteams: (state) => {
-    return state.teams.length
+    return state.data.length
   },
 
 }

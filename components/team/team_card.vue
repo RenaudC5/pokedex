@@ -1,7 +1,11 @@
 <template>
   <v-card>
-    <v-card-title class="d-flex justify-space-between">
-      <span>{{team.name}}</span>
+    <v-card-title class="d-flex justify-space-between align-center">
+      <section class="self-align-center">
+        <span class="team-index">{{teamIndex}}</span>
+         -
+        <span>{{team.name}}</span>
+      </section>
 
         <v-dialog
           v-model="dialog"
@@ -46,12 +50,10 @@
 
     <v-card-text>
       <v-row>
-        <v-col lg="6" sm="12">Pokemon 1</v-col>
-        <v-col lg="6" sm="12">Pokemon 2</v-col>
-        <v-col lg="6" sm="12">Pokemon 3</v-col>
-        <v-col lg="6" sm="12">Pokemon 4</v-col>
-        <v-col lg="6" sm="12">Pokemon 5</v-col>
-        <v-col lg="6" sm="12">Pokemon 6</v-col>
+        <v-col lg="6" v-for="(pokemon,index) of team.pokemons" :key="index">
+          <team_pokemon :pokemon="pokemon" :team="team"/>
+        </v-col>
+
 
       </v-row>
     </v-card-text>
@@ -61,13 +63,13 @@
 </template>
 
 <script>
-import {mapActions} from "vuex";
+import {mapActions, mapState} from "vuex";
+import team_pokemon from "@/components/team/team_pokemon";
 
 export default {
   name: "team_card",
-  props:{
-    team:Object
-  },
+
+  computed : mapState(['teams/data']),
   data : function() {
     return({
       dialog : false
@@ -77,14 +79,23 @@ export default {
     deleteTeam : function(){
       this.dialog = false
       console.log(this.team)
-      this.deleteTeam(this.team.name)
+      this.deleteSingleTeam(this.teamIndex)
     },
-    ...mapActions(["deleteTeam"])
+    ...mapActions("teams",["deleteSingleTeam"])
+  },
+  components:{
+    team_pokemon
+  },
+  props:{
+    team:Object,
+    teamIndex : Number
   },
 
 }
 </script>
 
 <style scoped>
-
+  .team-index{
+    font-size: 3rem;
+  }
 </style>

@@ -61,7 +61,7 @@
     </v-dialog>
     </v-col>
 
-    <v-col class="text-right">{{this.$store.getters.getNbteams}} / {{max_teams}}</v-col>
+    <v-col class="text-right">{{this.$store.getters["teams/getNbteams"]}} / {{max_teams}}</v-col>
   </v-row>
 </template>
 
@@ -81,17 +81,23 @@ export default {
   methods:{
     saveTeam() {
       //on regarde si le nom de l'équipe existe deja
-      if(this.$store.state.teams.find(x => x.name === this.team_name)){
+      if(this.$store.state.teams.data.find(x => x.name === this.team_name)){
         this.error = true;
       } else{
         this.dialog = false
         this.error = false;
+
+        let date = new Date();
+        console.log("AddTeam method")
+        console.log(date.toLocaleTimeString())
+        console.log(date.getMilliseconds())
+
         this.addTeam(this.team_name)
         this.team_name = ""
       }
 
     },
-    ...mapActions(["addTeam"])
+    ...mapActions("teams",["addTeam"])
   },
 
 }

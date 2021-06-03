@@ -14,7 +14,7 @@
     </v-row>
     <v-row >
         <v-col cols="3" md="4" lg="3" sm="6"
-               v-for="(pokemon,index) in this.$store.state.pokemons.filter(x => getName(x).toLocaleLowerCase().indexOf(pokemon_search.toLocaleLowerCase()) !== -1).slice(list_start,list_end)"
+               v-for="(pokemon,index) in this.$store.state.pokemons.data.filter(x => getName(x).toLocaleLowerCase().indexOf(pokemon_search.toLocaleLowerCase()) !== -1).slice(list_start,list_end)"
                v-bind:key="index"
         >
           <menu_card :pokemon="pokemon"/>
@@ -40,8 +40,8 @@
         <p>
           <span>{{list_start}}</span>
           -
-          <span v-if="list_end < this.$store.getters.getNbPokemons">{{list_end}}</span>
-          <span v-else>{{this.$store.getters.getNbPokemons}}</span>
+          <span v-if="list_end < this.$store.getters['pokemons/getNbPokemons']">{{list_end}}</span>
+          <span v-else>{{this.$store.getters["pokemons/getNbPokemons"]}}</span>
         </p>
       </v-col>
 
@@ -62,7 +62,7 @@
     <v-row>
       <v-col>
         <template>
-          <v-progress-linear :value="list_end/ this.$store.getters.getNbPokemons*100"></v-progress-linear>
+          <v-progress-linear :value="list_end/ this.$store.getters['pokemons/getNbPokemons']*100"></v-progress-linear>
         </template>
       </v-col>
     </v-row>
@@ -79,7 +79,6 @@
 import menu_card from "~/components/card/menu_card";
 import team_menu from "~/components/team/team_menu";
 
-import axios from "axios";
 import {LANGUAGE} from "~/constants";
 
 import {mapActions, mapState} from 'vuex'
@@ -95,7 +94,7 @@ export default {
       pokemon_search : ""
     }
   },
-  mounted: async function () {
+  beforeMount: function () {
     //https://pokeapi.co/api/v2/pokemon?limit=151
     //"https://pokeapi.co/api/v2/pokemon/" + pokemon.name
     //"https://pokeapi.co/api/v2/pokemon-species/"+pokemonFull.id
@@ -152,10 +151,10 @@ export default {
     this.getPokemons();
 
   },
-  computed : mapState(['pokemons']),
+  computed : mapState(['pokemons/data']),
   methods:{
     incrementList : function (){
-      if(this.list_start + this.list_step < this.$store.getters.getNbPokemons){
+      if(this.list_start + this.list_step < this.$store.getters["pokemons/getNbPokemons"]){
         this.list_start += this.list_step
         this.list_end += this.list_step
       }
@@ -175,7 +174,7 @@ export default {
         return x.name;
       }
     },
-    ...mapActions(["getPokemons"])
+    ...mapActions("pokemons",["getPokemons"])
   },
   components:{
     menu_card,
