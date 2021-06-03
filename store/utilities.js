@@ -1,9 +1,15 @@
+import {NB_POKEMON_PAR_PAGE} from "@/constants";
 export const state = () => ({
   data:{
     snackBar:{
       text: "",
       show : false,
       color:""
+    },
+    pagination:{
+      list_start:0,
+      list_end:NB_POKEMON_PAR_PAGE,
+      list_step:NB_POKEMON_PAR_PAGE
     }
   }
 })
@@ -18,6 +24,24 @@ export const mutations = {
 
   hideSnack(state){
     state.data.snackBar.show = false
+  },
+
+  resetList(state){
+    state.pagination = {
+        list_start:0,
+        list_end:NB_POKEMON_PAR_PAGE,
+        list_step:NB_POKEMON_PAR_PAGE
+    }
+  },
+
+  incrementList(state){
+      state.data.pagination.list_start += state.data.pagination.list_step;
+      state.data.pagination.list_end += state.data.pagination.list_step;
+  },
+
+  decrementList(state){
+    state.data.pagination.list_start -= state.data.pagination.list_step;
+    state.data.pagination.list_end -= state.data.pagination.list_step;
   }
 }
 
@@ -29,6 +53,18 @@ export const actions = {
 
   hideSnack({commit}){
     commit("hideSnack");
+  },
+
+  incrementList({commit,state},nbPokemons) {
+    if(state.data.pagination.list_end < nbPokemons){
+      commit("incrementList")
+    }
+  },
+
+  decrementList({commit,state}) {
+    if(state.data.pagination.list_start >= state.data.pagination.list_step){
+      commit("decrementList")
+    }
   }
 
 }

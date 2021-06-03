@@ -13,7 +13,8 @@
     </v-row>
     <v-row >
         <v-col cols="3" md="4" lg="3" sm="6"
-               v-for="(pokemon,index) in this.$store.state.pokemons.data.filter(x => getName(x).toLocaleLowerCase().indexOf(pokemon_search.toLocaleLowerCase()) !== -1).slice(list_start,list_end)"
+               v-for="(pokemon,index) in this.$store.state.pokemons.data.filter(x => getName(x).toLocaleLowerCase().indexOf(pokemon_search.toLocaleLowerCase()) !== -1)
+               .slice($store.state.utilities.data.pagination.list_start,$store.state.utilities.data.pagination.list_end)"
                v-bind:key="index"
         >
           <menu_card :pokemon="pokemon"/>
@@ -37,9 +38,9 @@
       <v-col class="d-flex justify-center align-center">
 
         <p>
-          <span>{{list_start}}</span>
+          <span>{{$store.state.utilities.data.pagination.list_start}}</span>
           -
-          <span v-if="list_end < this.$store.getters['pokemons/getNbPokemons']">{{list_end}}</span>
+          <span v-if=" $store.state.utilities.data.pagination.list_end < this.$store.getters['pokemons/getNbPokemons']">{{$store.state.utilities.data.pagination.list_end}}</span>
           <span v-else>{{this.$store.getters["pokemons/getNbPokemons"]}}</span>
         </p>
       </v-col>
@@ -89,9 +90,6 @@ export default {
   data() {
     return {
       language : LANGUAGE,
-      list_start: 0,
-      list_end : 0,
-      list_step: 0,
       pokemon_search : ""
     }
   },
@@ -152,24 +150,14 @@ export default {
 
 
   },
-  mounted() {
-    this.list_end = NB_POKEMON_PAR_PAGE;
-    this.list_step = NB_POKEMON_PAR_PAGE;
-  },
   computed : mapState(['pokemons/data']),
   methods:{
     incrementList : function (){
-      if(this.list_start + this.list_step < this.$store.getters["pokemons/getNbPokemons"]){
-        this.list_start += this.list_step
-        this.list_end += this.list_step
-      }
+      this.$store.dispatch("utilities/incrementList",this.$store.getters["pokemons/getNbPokemons"])
     },
 
     decrementList : function (){
-      if(this.list_start - this.list_step >= 0){
-        this.list_start -= this.list_step
-        this.list_end -= this.list_step
-      }
+      this.$store.dispatch("utilities/decrementList")
     },
 
     getName : function (x) {
