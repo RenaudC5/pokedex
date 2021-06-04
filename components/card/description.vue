@@ -1,13 +1,13 @@
 <template>
   <div>
     <div class="d-flex justify-sm-space-between">
-      <div class="align-md-center">
-        <img :src="pokemon.sprites.front_default" alt="pokemon vue de devant"/>
-        <img :src="pokemon.sprites.back_default" alt="pokemon vue de derrière"/>
+      <div class="align-md-center pokemon-img">
+        <img :src="getSprite('front_default')" alt="pokemon vue de devant"/>
+        <img :src="getSprite('back_default')" alt="pokemon vue de derrière"/>
       </div>
-      <div class="align-md-center">
-        <img :src="pokemon.sprites.front_shiny" alt="pokemon shiny vue de devant"/>
-        <img :src="pokemon.sprites.back_shiny" alt="pokemon shiny vue de derrière"/>
+      <div class="align-md-center pokemon-img">
+        <img :src="getSprite('front_shiny')" alt="pokemon shiny vue de devant"/>
+        <img :src="getSprite('back_shiny')" alt="pokemon shiny vue de derrière"/>
       </div>
     </div>
 
@@ -19,20 +19,12 @@
 
     <p>{{ pokemon.species.genera.find(x => x.language.name === this.language).genus}}</p>
 
-    <!-- <p>{{pokemon.species.flavor_text_entries.filter(x => x.language.name === this.language).map(x => x.version.name+" - "+x.flavor_text).join("\n")}}</p> -->
 
-    <v-row>
-      <v-col class="col-md-3 ">
-        <strong>Version</strong>
-      </v-col>
-      <v-col class="col-md-9">
-        <strong>Texte</strong>
-      </v-col>
-    </v-row>
-    <v-row v-for="(text,index) of pokemon.species.flavor_text_entries.filter(x => x.language.name === this.language)" v-bind:key="index">
-      <v-col class="col-md-3 "><strong>{{text.version.name}}</strong></v-col>
-      <v-col class="col-md-9">{{text.flavor_text}}</v-col>
-    </v-row>
+  <v-row>
+      <v-col class="col-md-3"><strong>Description : </strong></v-col>
+      <v-col class="col-md-9">{{getCurrentText()}}</v-col>
+  </v-row>
+
 
 
   </div>
@@ -40,11 +32,12 @@
 </template>
 
 <script>
-import axios from "axios";
-import { LANGUAGE } from '@/constants/' //langue pour le nom du pokémon
+import { LANGUAGE } from '@/constants/'
+import {mapState} from "vuex"; //langue pour le nom du pokémon
 
 export default {
   name: "description",
+  computed : mapState(['version/version']),
   props:{
     pokemon : Object
   },
@@ -55,19 +48,60 @@ export default {
   },
   async mounted() {
     //type du pokemon
-    for (let type of this.pokemon.types){
-      type.type = await axios.get(type.type.url).then(res => res.data)
-      type.name = type.type.names.find(x => x.language.name === this.language).name
-    }
+    // for (let type of this.pokemon.types){
+    //   type.type = await axios.get(type.type.url).then(res => res.data)
+    //   type.name = type.type.names.find(x => x.language.name === this.language).name
+    // }
+
+
   },
   methods:{
     getTypes: function () {
       return this.pokemon.types.map(x => x.name).join("/");
+    },
+    getCurrentText(){
+      //premier check avec la langue sélectionée
+
+      let texte = this.pokemon.species.flavor_text_entries.find(x => x.language.name === this.language && x.version.name === this.$store.state.version.version)
+      if(texte){
+        return texte.flavor_text
+      } else {
+        let texteEn = this.pokemon.species.flavor_text_entries.find(x => x.language.name === "en" && x.version.name === this.$store.state.version.version)
+        if(texteEn){
+          return "(Description en anglais) - "+texteEn.flavor_text
+        } else {
+          return "Aucune description pour cette version"
+        }
+      }
+    },
+
+    getSprite(sprite){
+      let img = this.pokemon.sprites[sprite]
+
+      for (let key of Object.keys(this.pokemon.sprites.versions)){
+
+        let versions = this.pokemon.sprites.versions[key]
+        for (let version of Object.keys(versions)){
+          if(version.indexOf(this.$store.state.version.version) !== -1){
+            if(versions[version][sprite]){
+              return versions[version][sprite]
+            } else {
+              return img
+            }
+
+          }
+        }
+      }
+
+      return img // si aucune image n'a été trouvée
     }
   }
 }
 </script>
 
 <style scoped>
-
+  .pokemon-img img{
+    height: 100px;
+    margin-left: 10px;
+  }
 </style>

@@ -3,16 +3,15 @@
     elevation="3"
     outlined
   >
-    <v-card-title>{{ pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1) }}</v-card-title>
+    <v-card-title>{{ getName().charAt(0).toUpperCase() + getName().slice(1) }}</v-card-title>
     <v-card-text>
-      <v-row
-        align="center"
-        class="mx-0"
-      >
-
-      </v-row>
+      <version_selector :pokemon="pokemon"/>
 
       <description :pokemon="pokemon"/>
+
+      <v-spacer></v-spacer>
+
+      <evolution_chain :pokemon="pokemon"/>
 
       <v-spacer></v-spacer>
 
@@ -74,6 +73,9 @@
 import moves from "~/components/card/moves";
 import stats from "~/components/card/stats";
 import description from "~/components/card/description";
+import version_selector from "@/components/card/version_selector";
+import evolution_chain from "@/components/card/evolution_chain";
+import {LANGUAGE} from "@/constants";
 export default {
   name: "pokemon_card",
   props:{
@@ -82,13 +84,21 @@ export default {
   data(){
     return({
       showStat : false,
-      showMoves : false
+      showMoves : false,
+      language : LANGUAGE
     })
   },
   components:{
     moves,
     stats,
-    description
+    description,
+    version_selector,
+    evolution_chain
+  },
+  methods:{
+    getName(){
+      return this.pokemon.species.names.find(x => x.language.name === this.language).name;
+    }
   }
 
 }

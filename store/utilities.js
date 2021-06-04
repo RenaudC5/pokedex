@@ -27,7 +27,6 @@ export const mutations = {
   },
 
   resetList(state){
-    console.log("resetPage")
     state.data.pagination = {
         list_start:0,
         list_end:NB_POKEMON_PAR_PAGE,

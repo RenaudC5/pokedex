@@ -61,8 +61,6 @@ export default {
   name: "menu_card",
   methods:{
     addToTeam : function (index){
-      console.log(index)
-      console.log(this.pokemon)
       this.addPokemon({pokemon : this.pokemon,index :index})
     },
     getName: function (){

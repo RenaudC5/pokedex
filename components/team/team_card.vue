@@ -72,7 +72,7 @@
 </template>
 
 <script>
-import {mapActions, mapState} from "vuex";
+import {mapState} from "vuex";
 import team_pokemon from "@/components/team/team_pokemon";
 
 export default {
@@ -87,7 +87,6 @@ export default {
   methods:{
     deleteTeam : function(){
       this.dialog = false
-      console.log(this.team)
       this.$store.dispatch("teams/deleteSingleTeam",this.teamIndex)
       this.$store.dispatch("utilities/updateSnack",{text : `Team ${this.team.name} suprimée`, color:"red"})
     },
